@@ -40,9 +40,9 @@ func handleArgs() {
 	}
 }
 
-type Model struct {
-	Deck         *Deck
-	CurrentCard  Card
+type model struct {
+	Deck         *deck
+	CurrentCard  card
 	CardIndex    int
 	Solved       int
 	ShowSolution bool
@@ -56,19 +56,19 @@ func main() {
 	}
 }
 
-func initialModel() Model {
-	d, err := LoadDeck(os.Args[1])
+func initialModel() model {
+	d, err := newDeck(os.Args[1])
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
 		os.Exit(1)
 	}
 	if len(d.Cards) == 0 {
-		fmt.Fprintf(os.Stderr, "Error: deck has no cards\n")
-		os.Exit(1)
+		fmt.Println("no cards to review in deck")
+		os.Exit(0)
 	}
 
 	i := rand.Intn(len(d.Cards))
-	return Model{
+	return model{
 		ShowSolution: false,
 		Deck:         d,
 		CardIndex:    i,
@@ -77,11 +77,11 @@ func initialModel() Model {
 	}
 }
 
-func (m Model) Init() tea.Cmd {
+func (m model) Init() tea.Cmd {
 	return nil
 }
 
-func (m Model) View() string {
+func (m model) View() string {
 	// Might be worth using a string builder
 	var s string
 	var helper string
@@ -105,7 +105,7 @@ func (m Model) View() string {
 	return s
 }
 
-func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		k := msg.String()
@@ -116,10 +116,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if m.ShowSolution {
 			if k == "y" {
 				m.ShowSolution = false
-				return m.Deck.ChangeCard(m, true)
+				return m.Deck.changeCard(m, true)
 			} else if k == "n" {
 				m.ShowSolution = false
-				return m.Deck.ChangeCard(m, false)
+				return m.Deck.changeCard(m, false)
 			}
 		} else if k == " " {
 			m.ShowSolution = true

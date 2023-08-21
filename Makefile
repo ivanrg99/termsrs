@@ -4,5 +4,5 @@ build:
 	go build .
 
 run:
-	./build/termsrs s.srs
+	./termsrs s.srs
 

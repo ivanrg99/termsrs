@@ -50,10 +50,13 @@ type model struct {
 
 func main() {
 	handleArgs()
-	p := tea.NewProgram(initialModel())
+	m := initialModel()
+	p := tea.NewProgram(m)
 	if _, err := p.Run(); err != nil {
 		fmt.Println("could not start program:", err)
 	}
+	m.Deck.updateDeckFile()
+	fmt.Println("Done!")
 }
 
 func initialModel() model {
@@ -72,8 +75,9 @@ func initialModel() model {
 		ShowSolution: false,
 		Deck:         d,
 		CardIndex:    i,
-		CurrentCard:  d.Cards[i],
-		Solved:       0,
+		// Consider removing this and simply indexing the cards by the card index
+		CurrentCard: d.Cards[i],
+		Solved:      0,
 	}
 }
 
